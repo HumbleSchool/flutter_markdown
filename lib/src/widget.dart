@@ -17,6 +17,17 @@ import 'style_sheet.dart';
 /// Used by [MarkdownWidget.onTapLink].
 typedef void MarkdownTapLinkCallback(String href);
 
+/// Signature for callbacks used by [MarkdownWidget] when the user taps an image.
+///
+/// [type] to [path] mapping:
+/// * 'data': Nothing, use [uri]
+/// * 'file': The path to the file
+/// * 'http(s)': The url of the image
+/// * 'resource': The path to the resource
+///
+/// Used by [MarkdownWidget.onTapImage].
+typedef void MarkdownTapImageCallback(String type, String path, Uri uri);
+
 /// Creates a format [TextSpan] given a string.
 ///
 /// Used by [MarkdownWidget] to highlight the contents of `pre` elements.
@@ -46,6 +57,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.styleSheet,
     this.syntaxHighlighter,
     this.onTapLink,
+    this.onTapImage,
     this.imageDirectory,
   })  : assert(data != null),
         super(key: key);
@@ -65,6 +77,9 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// Called when the user taps a link.
   final MarkdownTapLinkCallback onTapLink;
+
+  /// Called when the user taps an image.
+  final MarkdownTapImageCallback onTapImage;
 
   /// The base directory holding images referenced by Img tags with local file paths.
   final Directory imageDirectory;
@@ -138,6 +153,13 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
   }
 
   @override
+  void onTapImage(String type, String path, Uri uri) {
+    if (widget.onTapImage != null) {
+      widget.onTapImage(type, path, uri);
+    }
+  }
+
+  @override
   TextSpan formatText(MarkdownStyleSheet styleSheet, String code) {
     if (widget.syntaxHighlighter != null)
       return widget.syntaxHighlighter.format(code);
@@ -165,6 +187,7 @@ class MarkdownBody extends MarkdownWidget {
     MarkdownStyleSheet styleSheet,
     SyntaxHighlighter syntaxHighlighter,
     MarkdownTapLinkCallback onTapLink,
+    MarkdownTapImageCallback onTapImage,
     Directory imageDirectory,
   }) : super(
           key: key,
@@ -172,6 +195,7 @@ class MarkdownBody extends MarkdownWidget {
           styleSheet: styleSheet,
           syntaxHighlighter: syntaxHighlighter,
           onTapLink: onTapLink,
+          onTapImage: onTapImage,
           imageDirectory: imageDirectory,
         );
 
@@ -202,6 +226,7 @@ class Markdown extends MarkdownWidget {
     MarkdownStyleSheet styleSheet,
     SyntaxHighlighter syntaxHighlighter,
     MarkdownTapLinkCallback onTapLink,
+    MarkdownTapImageCallback onTapImage,
     Directory imageDirectory,
     this.padding: const EdgeInsets.all(16.0),
   }) : super(
@@ -210,6 +235,7 @@ class Markdown extends MarkdownWidget {
           styleSheet: styleSheet,
           syntaxHighlighter: syntaxHighlighter,
           onTapLink: onTapLink,
+          onTapImage: onTapImage,
           imageDirectory: imageDirectory,
         );
 

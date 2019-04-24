@@ -72,6 +72,8 @@ abstract class MarkdownBuilderDelegate {
   /// `href` attribute.
   GestureRecognizer createLink(String href);
 
+  void onTapImage(String type, String path, Uri uri);
+
   /// Returns formatted text to use to display the given contents of a `pre`
   /// element.
   ///
@@ -259,20 +261,29 @@ class MarkdownBuilder implements md.NodeVisitor {
     Uri uri = Uri.parse(path);
     Widget child;
     if (uri.scheme == 'http' || uri.scheme == 'https') {
-      child = new CachedNetworkImage(
-        imageUrl: uri.toString(),
-        width: width,
-        height: height,
+      child = new GestureDetector(
+        onTap: () => delegate.onTapImage(uri.scheme, uri.toString(), uri),
+        child: CachedNetworkImage(
+          imageUrl: uri.toString(),
+          width: width,
+          height: height,
+        ),
       );
     } else if (uri.scheme == 'data') {
       child = _handleDataSchemeUri(uri, width, height);
     } else if (uri.scheme == "resource") {
-      child = new Image.asset(path.substring(9), width: width, height: height);
+      child = new GestureDetector(
+        onTap: () => delegate.onTapImage('resource', path.substring(9), uri),
+        child: Image.asset(path.substring(9), width: width, height: height),
+      );
     } else {
       String filePath = (imageDirectory == null
           ? uri.toFilePath()
           : p.join(imageDirectory.path, uri.toFilePath()));
-      child = new Image.file(new File(filePath), width: width, height: height);
+      child = new GestureDetector(
+        onTap: () => delegate.onTapImage('file', filePath, uri),
+        child: Image.file(new File(filePath), width: width, height: height),
+      );
     }
 
     if (_linkHandlers.isNotEmpty) {
@@ -287,10 +298,16 @@ class MarkdownBuilder implements md.NodeVisitor {
       Uri uri, final double width, final double height) {
     final String mimeType = uri.data.mimeType;
     if (mimeType.startsWith('image/')) {
-      return new Image.memory(uri.data.contentAsBytes(),
-          width: width, height: height);
+      return new GestureDetector(
+        onTap: () => delegate.onTapImage('data', null, uri),
+        child: Image.memory(uri.data.contentAsBytes(),
+            width: width, height: height),
+      );
     } else if (mimeType.startsWith('text/')) {
-      return new Text(uri.data.contentAsString());
+      return GestureDetector(
+        onTap: () => delegate.onTapImage('data', null, uri),
+        child: new Text(uri.data.contentAsString()),
+      );
     }
     return const SizedBox();
   }
