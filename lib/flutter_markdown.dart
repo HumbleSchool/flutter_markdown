@@ -6,5 +6,6 @@
 library flutter_markdown;
 
 export 'src/builder.dart';
+export 'src/mc_extension_set.dart';
 export 'src/style_sheet.dart';
 export 'src/widget.dart';

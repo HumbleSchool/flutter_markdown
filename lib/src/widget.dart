@@ -59,6 +59,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.onTapLink,
     this.onTapImage,
     this.imageDirectory,
+    this.extensionSet,
   })  : assert(data != null),
         super(key: key);
 
@@ -83,6 +84,9 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// The base directory holding images referenced by Img tags with local file paths.
   final Directory imageDirectory;
+
+  /// ExtensionSets provide a simple grouping mechanism for common Markdown flavors.
+  final md.ExtensionSet extensionSet;
 
   /// Subclasses should override this function to display the given children,
   /// which are the parsed representation of [data].
@@ -125,7 +129,8 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
 
     // TODO: This can be optimized by doing the split and removing \r at the same time
     final List<String> lines = widget.data.replaceAll('\r\n', '\n').split('\n');
-    final md.Document document = new md.Document(encodeHtml: false);
+    final md.Document document =
+        new md.Document(encodeHtml: false, extensionSet: widget.extensionSet);
     final MarkdownBuilder builder = new MarkdownBuilder(
       delegate: this,
       styleSheet: styleSheet,
@@ -189,6 +194,7 @@ class MarkdownBody extends MarkdownWidget {
     MarkdownTapLinkCallback onTapLink,
     MarkdownTapImageCallback onTapImage,
     Directory imageDirectory,
+    md.ExtensionSet extensionSet,
   }) : super(
           key: key,
           data: data,
@@ -197,6 +203,7 @@ class MarkdownBody extends MarkdownWidget {
           onTapLink: onTapLink,
           onTapImage: onTapImage,
           imageDirectory: imageDirectory,
+          extensionSet: extensionSet,
         );
 
   @override
@@ -228,6 +235,7 @@ class Markdown extends MarkdownWidget {
     MarkdownTapLinkCallback onTapLink,
     MarkdownTapImageCallback onTapImage,
     Directory imageDirectory,
+    md.ExtensionSet extensionSet,
     this.padding: const EdgeInsets.all(16.0),
   }) : super(
           key: key,
@@ -237,6 +245,7 @@ class Markdown extends MarkdownWidget {
           onTapLink: onTapLink,
           onTapImage: onTapImage,
           imageDirectory: imageDirectory,
+          extensionSet: extensionSet,
         );
 
   /// The amount of space by which to inset the children.

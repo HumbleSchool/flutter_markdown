@@ -37,3 +37,16 @@ The `Img` tag only supports the following image locations:
 
 * From image locations referring to bundled assets: Use an asset name prefixed by `resource:`.
   like `resource:assets/image.png`.
+  
+## Madam Curious Support
+
+Include `mcExtensionSet` to enable Madam Curious specific syntax:
+
+    new Markdown(data: markdownSource, extensionSet: mcExtensionSet);
+    
+or
+
+    new MarkdownBody(data: markdownSource, extensionSet: mcExtensionSet);
+    
+You can even create your own extension sets. See
+[https://github.com/flutter/flutter_markdown/pull/85].
