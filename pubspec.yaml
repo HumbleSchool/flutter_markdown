@@ -7,7 +7,7 @@ version: 0.2.0
 dependencies:
   flutter:
     sdk: flutter
-  cached_network_image: ^0.7.0
+  cached_network_image: ^1.1.1
   markdown: ^2.0.0
   meta: ^1.0.5
   string_scanner: ^1.0.0
