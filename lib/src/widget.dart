@@ -28,6 +28,25 @@ typedef void MarkdownTapLinkCallback(String href);
 /// Used by [MarkdownWidget.onTapImage].
 typedef void MarkdownTapImageCallback(String type, String path, Uri uri);
 
+/// Signature for method that returns a widget to be displayed while an image is
+/// loading.
+typedef Widget NetworkImagePlaceholder({
+  BuildContext context,
+  String url,
+  double height,
+  double width,
+});
+
+/// Signature for method that returns a widget to be displayed while there is an
+/// error loading an image.
+typedef Widget NetworkImageErrorWidget({
+  BuildContext context,
+  String url,
+  dynamic error,
+  double height,
+  double width,
+});
+
 /// Creates a format [TextSpan] given a string.
 ///
 /// Used by [MarkdownWidget] to highlight the contents of `pre` elements.
@@ -60,6 +79,8 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.onTapImage,
     this.imageDirectory,
     this.extensionSet,
+    this.networkImagePlaceholder,
+    this.networkImageErrorWidget,
   })  : assert(data != null),
         super(key: key);
 
@@ -84,6 +105,12 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// The base directory holding images referenced by Img tags with local file paths.
   final Directory imageDirectory;
+
+  /// What to render while an image is being loaded.
+  final NetworkImagePlaceholder networkImagePlaceholder;
+
+  /// What to render while there is an error loading an image.
+  final NetworkImageErrorWidget networkImageErrorWidget;
 
   /// ExtensionSets provide a simple grouping mechanism for common Markdown flavors.
   final md.ExtensionSet extensionSet;
@@ -165,6 +192,46 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
   }
 
   @override
+  Widget networkImagePlaceholder({
+    BuildContext context,
+    String url,
+    double height,
+    double width,
+  }) {
+    if (widget.networkImagePlaceholder != null) {
+      return widget.networkImagePlaceholder(
+        context: context,
+        url: url,
+        height: height,
+        width: width,
+      );
+    }
+
+    return Text('Loading image');
+  }
+
+  @override
+  Widget networkImageErrorWidget({
+    BuildContext context,
+    String url,
+    dynamic error,
+    double height,
+    double width,
+  }) {
+    if (widget.networkImageErrorWidget != null) {
+      return widget.networkImageErrorWidget(
+        context: context,
+        url: url,
+        error: error,
+        height: height,
+        width: width,
+      );
+    }
+
+    return Text('Error loading image');
+  }
+
+  @override
   TextSpan formatText(MarkdownStyleSheet styleSheet, String code) {
     if (widget.syntaxHighlighter != null)
       return widget.syntaxHighlighter.format(code);
@@ -194,6 +261,8 @@ class MarkdownBody extends MarkdownWidget {
     MarkdownTapLinkCallback onTapLink,
     MarkdownTapImageCallback onTapImage,
     Directory imageDirectory,
+    NetworkImagePlaceholder networkImagePlaceholder,
+    NetworkImageErrorWidget networkImageErrorWidget,
     md.ExtensionSet extensionSet,
   }) : super(
           key: key,
@@ -203,6 +272,8 @@ class MarkdownBody extends MarkdownWidget {
           onTapLink: onTapLink,
           onTapImage: onTapImage,
           imageDirectory: imageDirectory,
+          networkImagePlaceholder: networkImagePlaceholder,
+          networkImageErrorWidget: networkImageErrorWidget,
           extensionSet: extensionSet,
         );
 
@@ -235,6 +306,8 @@ class Markdown extends MarkdownWidget {
     MarkdownTapLinkCallback onTapLink,
     MarkdownTapImageCallback onTapImage,
     Directory imageDirectory,
+    NetworkImagePlaceholder networkImagePlaceholder,
+    NetworkImageErrorWidget networkImageErrorWidget,
     md.ExtensionSet extensionSet,
     this.padding: const EdgeInsets.all(16.0),
   }) : super(
@@ -245,6 +318,8 @@ class Markdown extends MarkdownWidget {
           onTapLink: onTapLink,
           onTapImage: onTapImage,
           imageDirectory: imageDirectory,
+          networkImagePlaceholder: networkImagePlaceholder,
+          networkImageErrorWidget: networkImageErrorWidget,
           extensionSet: extensionSet,
         );
 

@@ -74,6 +74,21 @@ abstract class MarkdownBuilderDelegate {
 
   void onTapImage(String type, String path, Uri uri);
 
+  Widget networkImagePlaceholder({
+    BuildContext context,
+    String url,
+    double height,
+    double width,
+  });
+
+  Widget networkImageErrorWidget({
+    BuildContext context,
+    String url,
+    dynamic error,
+    double height,
+    double width,
+  });
+
   /// Returns formatted text to use to display the given contents of a `pre`
   /// element.
   ///
@@ -267,6 +282,21 @@ class MarkdownBuilder implements md.NodeVisitor {
           imageUrl: uri.toString(),
           width: width,
           height: height,
+          placeholder: (BuildContext context, String url) =>
+              delegate.networkImagePlaceholder(
+                context: context,
+                url: url,
+                height: height,
+                width: width,
+              ),
+          errorWidget: (BuildContext context, String url, dynamic error) =>
+              delegate.networkImageErrorWidget(
+                context: context,
+                url: url,
+                error: error,
+                height: height,
+                width: width,
+              ),
         ),
       );
     } else if (uri.scheme == 'data') {
