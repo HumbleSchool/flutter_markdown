@@ -7,7 +7,7 @@ final md.ExtensionSet mcExtensionSet = md.ExtensionSet(
 );
 
 class SubscriptSyntax extends md.InlineSyntax {
-  SubscriptSyntax() : super(r'<sub>.+</sub>');
+  SubscriptSyntax() : super(r'<sub>.+?</sub>');
 
   bool onMatch(md.InlineParser parser, Match match) {
     var innerText = match[0].substring(5, match[0].length - 6);
@@ -18,7 +18,7 @@ class SubscriptSyntax extends md.InlineSyntax {
 }
 
 class SuperscriptSyntax extends md.InlineSyntax {
-  SuperscriptSyntax() : super(r'<sup>.+</sup>');
+  SuperscriptSyntax() : super(r'<sup>.+?</sup>');
 
   bool onMatch(md.InlineParser parser, Match match) {
     var innerText = match[0].substring(5, match[0].length - 6);
