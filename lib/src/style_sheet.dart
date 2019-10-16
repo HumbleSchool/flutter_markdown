@@ -84,14 +84,13 @@ class MarkdownStyleSheet {
         border: new Border(
             top: new BorderSide(width: 5.0, color: Colors.grey.shade300)),
       ),
+      // TODO Rethink when Flutter text rendering supports super/subscript
       sub: const TextStyle(
-        fontSize: 11,
-        letterSpacing: 3.0,
+        fontSize: 20,
       ),
+      // TODO Rethink when Flutter text rendering supports super/subscript
       sup: const TextStyle(
-        fontSize: 11,
-        letterSpacing: 3.0,
-        decoration: TextDecoration.overline,
+        fontSize: 20,
       ),
     );
   }
@@ -132,10 +131,14 @@ class MarkdownStyleSheet {
         border: new Border(
             top: new BorderSide(width: 5.0, color: Colors.grey.shade300)),
       ),
-      sub: theme.textTheme.body1
-          .merge(TextStyle(decoration: TextDecoration.underline)),
-      sup: theme.textTheme.body1
-          .merge(TextStyle(decoration: TextDecoration.overline)),
+      // TODO Rethink when Flutter text rendering supports super/subscript
+      sub: const TextStyle(
+        fontSize: 20,
+      ),
+      // TODO Rethink when Flutter text rendering supports super/subscript
+      sup: const TextStyle(
+        fontSize: 20,
+      ),
     );
   }
 
