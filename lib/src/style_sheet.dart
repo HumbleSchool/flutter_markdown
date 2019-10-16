@@ -4,6 +4,8 @@
 
 import 'package:flutter/material.dart';
 
+const subSuperFontScale = 0.6;
+
 /// Defines which [TextStyle] objects to use for which Markdown elements.
 class MarkdownStyleSheet {
   /// Creates an explicit mapping of [TextStyle] objects to Markdown elements.
@@ -84,13 +86,19 @@ class MarkdownStyleSheet {
         border: new Border(
             top: new BorderSide(width: 5.0, color: Colors.grey.shade300)),
       ),
-      // TODO Rethink when Flutter text rendering supports super/subscript
-      sub: const TextStyle(
-        fontSize: 20,
+      // Sub/super-script current only works well only when mixed with 'body1'
+      // text.
+      //
+      // Also, the way we have implemented this does not honour soft-wrapping
+      // rules - there is a small chance that just the sub/super-script in a
+      // term may end up being wrapped to the next line, rather than the whole
+      // term being wrapped to the next line.
+      // TODO Implement true sub/super-script when Flutter begins to support it
+      sub: theme.textTheme.body1.copyWith(
+        fontSize: theme.textTheme.body1.fontSize * subSuperFontScale,
       ),
-      // TODO Rethink when Flutter text rendering supports super/subscript
-      sup: const TextStyle(
-        fontSize: 20,
+      sup: theme.textTheme.body1.copyWith(
+        fontSize: theme.textTheme.body1.fontSize * subSuperFontScale,
       ),
     );
   }
@@ -131,13 +139,11 @@ class MarkdownStyleSheet {
         border: new Border(
             top: new BorderSide(width: 5.0, color: Colors.grey.shade300)),
       ),
-      // TODO Rethink when Flutter text rendering supports super/subscript
-      sub: const TextStyle(
-        fontSize: 20,
+      sub: theme.textTheme.body1.copyWith(
+        fontSize: theme.textTheme.body1.fontSize * subSuperFontScale,
       ),
-      // TODO Rethink when Flutter text rendering supports super/subscript
-      sup: const TextStyle(
-        fontSize: 20,
+      sup: theme.textTheme.body1.copyWith(
+        fontSize: theme.textTheme.body1.fontSize * subSuperFontScale,
       ),
     );
   }

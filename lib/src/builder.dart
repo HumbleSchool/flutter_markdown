@@ -146,15 +146,52 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     _addParentInlineIfNeeded(_blocks.last.tag);
 
-    final TextSpan span = _blocks.last.tag == 'pre'
+    final InlineSpan span = _blocks.last.tag == 'pre'
         ? delegate.formatText(styleSheet, text.text)
-        : new TextSpan(
-            style: _inlines.last.style,
-            text: text.text,
-            recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
+        : _buildInlineSpan(
+            _inlines.last,
+            text.text,
+            _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
           );
 
     _inlines.last.children.add(new RichText(text: span));
+  }
+
+  InlineSpan _buildInlineSpan(
+      _InlineElement element, String text, GestureRecognizer recognizer) {
+    final TextStyle textStyle = element.style;
+    final textSpan = TextSpan(
+      style: textStyle,
+      text: text,
+      recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
+    );
+
+    switch (element.tag) {
+      case 'sub':
+        final double shift = styleSheet.p.fontSize - textStyle.fontSize;
+        return WidgetSpan(
+          child: Column(
+            children: <Widget>[
+              // Seems the [SizedBox] isn't necessary here, but we keep it for
+              // symmetry.
+              SizedBox(height: shift),
+              Text.rich(textSpan),
+            ],
+          ),
+        );
+      case 'sup':
+        final double shift = styleSheet.p.fontSize - textStyle.fontSize;
+        return WidgetSpan(
+          child: Column(
+            children: <Widget>[
+              Text.rich(textSpan),
+              SizedBox(height: shift),
+            ],
+          ),
+        );
+      default:
+        return textSpan;
+    }
   }
 
   @override
@@ -284,19 +321,19 @@ class MarkdownBuilder implements md.NodeVisitor {
           height: height,
           placeholder: (BuildContext context, String url) =>
               delegate.networkImagePlaceholder(
-                context: context,
-                url: url,
-                height: height,
-                width: width,
-              ),
+            context: context,
+            url: url,
+            height: height,
+            width: width,
+          ),
           errorWidget: (BuildContext context, String url, dynamic error) =>
               delegate.networkImageErrorWidget(
-                context: context,
-                url: url,
-                error: error,
-                height: height,
-                width: width,
-              ),
+            context: context,
+            url: url,
+            error: error,
+            height: height,
+            width: width,
+          ),
         ),
       );
     } else if (uri.scheme == 'data') {
@@ -394,11 +431,11 @@ class MarkdownBuilder implements md.NodeVisitor {
           mergedTexts.last is RichText &&
           child is RichText) {
         RichText previous = mergedTexts.removeLast();
-        List<TextSpan> children = previous.text.children != null
+        List<InlineSpan> children = previous.text.children != null
             ? new List.from(previous.text.children)
             : [previous.text];
         children.add(child.text);
-        TextSpan mergedSpan = new TextSpan(children: children);
+        InlineSpan mergedSpan = new TextSpan(children: children);
         mergedTexts.add(new RichText(text: mergedSpan));
       } else {
         mergedTexts.add(child);
