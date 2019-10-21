@@ -32,7 +32,6 @@ typedef void MarkdownTapImageCallback(String type, String path, Uri uri);
 /// loading.
 typedef Widget NetworkImagePlaceholder({
   BuildContext context,
-  String url,
   double height,
   double width,
 });
@@ -41,10 +40,9 @@ typedef Widget NetworkImagePlaceholder({
 /// error loading an image.
 typedef Widget NetworkImageErrorWidget({
   BuildContext context,
-  String url,
-  dynamic error,
   double height,
   double width,
+  VoidCallback retryFn,
 });
 
 /// Creates a format [TextSpan] given a string.
@@ -194,14 +192,12 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
   @override
   Widget networkImagePlaceholder({
     BuildContext context,
-    String url,
     double height,
     double width,
   }) {
     if (widget.networkImagePlaceholder != null) {
       return widget.networkImagePlaceholder(
         context: context,
-        url: url,
         height: height,
         width: width,
       );
@@ -213,18 +209,16 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
   @override
   Widget networkImageErrorWidget({
     BuildContext context,
-    String url,
-    dynamic error,
     double height,
     double width,
+    VoidCallback retryFn,
   }) {
     if (widget.networkImageErrorWidget != null) {
       return widget.networkImageErrorWidget(
         context: context,
-        url: url,
-        error: error,
         height: height,
         width: width,
+        retryFn: retryFn,
       );
     }
 

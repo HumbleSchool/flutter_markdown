@@ -4,7 +4,7 @@
 
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -76,17 +76,15 @@ abstract class MarkdownBuilderDelegate {
 
   Widget networkImagePlaceholder({
     BuildContext context,
-    String url,
     double height,
     double width,
   });
 
   Widget networkImageErrorWidget({
     BuildContext context,
-    String url,
-    dynamic error,
     double height,
     double width,
+    VoidCallback retryFn,
   });
 
   /// Returns formatted text to use to display the given contents of a `pre`
@@ -315,25 +313,42 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (uri.scheme == 'http' || uri.scheme == 'https') {
       child = new GestureDetector(
         onTap: () => delegate.onTapImage(uri.scheme, uri.toString(), uri),
-        child: CachedNetworkImage(
-          imageUrl: uri.toString(),
-          width: width,
+        child: ExtendedImage.network(
+          uri.toString(),
           height: height,
-          placeholder: (BuildContext context, String url) =>
-              delegate.networkImagePlaceholder(
-            context: context,
-            url: url,
-            height: height,
-            width: width,
-          ),
-          errorWidget: (BuildContext context, String url, dynamic error) =>
-              delegate.networkImageErrorWidget(
-            context: context,
-            url: url,
-            error: error,
-            height: height,
-            width: width,
-          ),
+          width: width,
+          loadStateChanged: (ExtendedImageState state) {
+            switch (state.extendedImageLoadState) {
+              case LoadState.loading:
+                return Builder(
+                  builder: (builderContext) {
+                    return delegate.networkImagePlaceholder(
+                      context: builderContext,
+                      height: height,
+                      width: width,
+                    );
+                  },
+                );
+              case LoadState.completed:
+                return ExtendedRawImage(
+                  image: state.extendedImageInfo?.image,
+                  height: height,
+                  width: width,
+                );
+              case LoadState.failed:
+              default:
+                return Builder(
+                  builder: (builderContext) {
+                    return delegate.networkImageErrorWidget(
+                      context: builderContext,
+                      height: height,
+                      width: width,
+                      retryFn: state.reLoadImage,
+                    );
+                  },
+                );
+            }
+          },
         ),
       );
     } else if (uri.scheme == 'data') {

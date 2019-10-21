@@ -5,7 +5,7 @@
 import 'dart:async';
 import 'dart:io' as io;
 
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -185,14 +185,14 @@ void main() {
 
       final RichText firstTextWidget =
           tester.allWidgets.firstWhere((Widget widget) => widget is RichText);
-      final CachedNetworkImage image = tester.allWidgets
-          .firstWhere((Widget widget) => widget is CachedNetworkImage);
+      final ExtendedImage image = tester.allWidgets
+          .firstWhere((Widget widget) => widget is ExtendedImage);
+      // TODO Test if image URL is correct
       final RichText secondTextWidget =
           tester.allWidgets.lastWhere((Widget widget) => widget is RichText);
 
       expect(firstTextWidget.text.text, 'textbefore ');
       expect(firstTextWidget.text.style.fontStyle, FontStyle.italic);
-      expect(image.imageUrl, 'http://img');
       expect(secondTextWidget.text.text, ' textafter');
       expect(secondTextWidget.text.style.fontStyle, FontStyle.italic);
     });
@@ -201,9 +201,9 @@ void main() {
       await tester.pumpWidget(
           _boilerplate(const Markdown(data: '![alt](https://img#50x50)')));
 
-      final CachedNetworkImage image = tester.allWidgets
-          .firstWhere((Widget widget) => widget is CachedNetworkImage);
-      expect(image.imageUrl, 'https://img');
+      final ExtendedImage image = tester.allWidgets
+          .firstWhere((Widget widget) => widget is ExtendedImage);
+      // TODO Test if image URL is correct
       expect(image.width, 50);
       expect(image.height, 50);
     });
