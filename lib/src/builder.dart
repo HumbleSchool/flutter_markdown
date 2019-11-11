@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:path/path.dart' as p;
@@ -73,6 +74,8 @@ abstract class MarkdownBuilderDelegate {
   GestureRecognizer createLink(String href);
 
   void onTapImage(String type, String path, Uri uri);
+
+  IconData imageTapIndicator();
 
   Widget networkImagePlaceholder({
     BuildContext context,
@@ -365,6 +368,25 @@ class MarkdownBuilder implements md.NodeVisitor {
       child = new GestureDetector(
         onTap: () => delegate.onTapImage('file', filePath, uri),
         child: Image.file(new File(filePath), width: width, height: height),
+      );
+    }
+
+    final IconData iconData = delegate.imageTapIndicator();
+    if (iconData != null) {
+      child = Stack(
+        children: <Widget>[
+          child,
+          Positioned(
+            top: 4,
+            right: 4,
+            child: IgnorePointer(
+              child: Icon(
+                iconData,
+                color: Colors.black.withOpacity(0.3),
+              ),
+            ),
+          ),
+        ],
       );
     }
 

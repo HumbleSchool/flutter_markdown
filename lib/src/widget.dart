@@ -28,6 +28,10 @@ typedef void MarkdownTapLinkCallback(String href);
 /// Used by [MarkdownWidget.onTapImage].
 typedef void MarkdownTapImageCallback(String type, String path, Uri uri);
 
+/// Signature for the function used by [MarkdownWidget] to get the image tap
+/// indicator icon to be displayed.
+typedef IconData MarkdownImageTapIndicator();
+
 /// Signature for method that returns a widget to be displayed while an image is
 /// loading.
 typedef Widget NetworkImagePlaceholder({
@@ -75,6 +79,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.syntaxHighlighter,
     this.onTapLink,
     this.onTapImage,
+    this.imageTapIndicator,
     this.imageDirectory,
     this.extensionSet,
     this.networkImagePlaceholder,
@@ -100,6 +105,11 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// Called when the user taps an image.
   final MarkdownTapImageCallback onTapImage;
+
+  /// Some icon that indicates that an action will take place on tapping the
+  /// image (for example, a 'zoom' icon if the image zooms on tapping). This
+  /// will be displayed in the top right corner.
+  final MarkdownImageTapIndicator imageTapIndicator;
 
   /// The base directory holding images referenced by Img tags with local file paths.
   final Directory imageDirectory;
@@ -190,6 +200,15 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
   }
 
   @override
+  IconData imageTapIndicator() {
+    if (widget.imageTapIndicator != null) {
+      return widget.imageTapIndicator();
+    } else {
+      return null;
+    }
+  }
+
+  @override
   Widget networkImagePlaceholder({
     BuildContext context,
     double height,
@@ -254,6 +273,7 @@ class MarkdownBody extends MarkdownWidget {
     SyntaxHighlighter syntaxHighlighter,
     MarkdownTapLinkCallback onTapLink,
     MarkdownTapImageCallback onTapImage,
+    MarkdownImageTapIndicator imageTapIndicator,
     Directory imageDirectory,
     NetworkImagePlaceholder networkImagePlaceholder,
     NetworkImageErrorWidget networkImageErrorWidget,
@@ -265,6 +285,7 @@ class MarkdownBody extends MarkdownWidget {
           syntaxHighlighter: syntaxHighlighter,
           onTapLink: onTapLink,
           onTapImage: onTapImage,
+          imageTapIndicator: imageTapIndicator,
           imageDirectory: imageDirectory,
           networkImagePlaceholder: networkImagePlaceholder,
           networkImageErrorWidget: networkImageErrorWidget,
@@ -299,6 +320,7 @@ class Markdown extends MarkdownWidget {
     SyntaxHighlighter syntaxHighlighter,
     MarkdownTapLinkCallback onTapLink,
     MarkdownTapImageCallback onTapImage,
+    MarkdownImageTapIndicator imageTapIndicator,
     Directory imageDirectory,
     NetworkImagePlaceholder networkImagePlaceholder,
     NetworkImageErrorWidget networkImageErrorWidget,
@@ -311,6 +333,7 @@ class Markdown extends MarkdownWidget {
           syntaxHighlighter: syntaxHighlighter,
           onTapLink: onTapLink,
           onTapImage: onTapImage,
+          imageTapIndicator: imageTapIndicator,
           imageDirectory: imageDirectory,
           networkImagePlaceholder: networkImagePlaceholder,
           networkImageErrorWidget: networkImageErrorWidget,
