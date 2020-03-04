@@ -75,7 +75,7 @@ abstract class MarkdownBuilderDelegate {
 
   void onTapImage(String type, String path, Uri uri);
 
-  IconData imageTapIndicator();
+  Widget imageTapIndicator();
 
   Widget networkImagePlaceholder({
     BuildContext context,
@@ -371,8 +371,8 @@ class MarkdownBuilder implements md.NodeVisitor {
       );
     }
 
-    final IconData iconData = delegate.imageTapIndicator();
-    if (iconData != null) {
+    final Widget indicator = delegate.imageTapIndicator();
+    if (indicator != null) {
       child = Stack(
         children: <Widget>[
           child,
@@ -380,10 +380,7 @@ class MarkdownBuilder implements md.NodeVisitor {
             top: 4,
             right: 4,
             child: IgnorePointer(
-              child: Icon(
-                iconData,
-                color: Colors.black.withOpacity(0.3),
-              ),
+              child: indicator,
             ),
           ),
         ],

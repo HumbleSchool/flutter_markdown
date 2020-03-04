@@ -30,7 +30,7 @@ typedef void MarkdownTapImageCallback(String type, String path, Uri uri);
 
 /// Signature for the function used by [MarkdownWidget] to get the image tap
 /// indicator icon to be displayed.
-typedef IconData MarkdownImageTapIndicator();
+typedef Widget MarkdownImageTapIndicator();
 
 /// Signature for method that returns a widget to be displayed while an image is
 /// loading.
@@ -200,7 +200,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
   }
 
   @override
-  IconData imageTapIndicator() {
+  Widget imageTapIndicator() {
     if (widget.imageTapIndicator != null) {
       return widget.imageTapIndicator();
     } else {
