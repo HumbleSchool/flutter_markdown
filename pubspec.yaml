@@ -7,7 +7,7 @@ version: 0.2.0
 dependencies:
   flutter:
     sdk: flutter
-  extended_image: ^0.6.4
+  extended_image: ^0.7.1
   markdown: ^2.0.0
   meta: ^1.0.5
   string_scanner: ^1.0.0
